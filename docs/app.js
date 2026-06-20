@@ -12,7 +12,7 @@
 // ---------------------------------------------------------------------------
 // Config — swap API_BASE for the cloud endpoint after Phase 7
 // ---------------------------------------------------------------------------
-const API_BASE = 'http://localhost:7071/api';
+const API_BASE = 'https://verdict-fn.azurewebsites.net/api';
 const POLL_MS  = 2500;
 const MAX_ARG_CHARS = 280; // mirrors GameService.MaxArgChars
 

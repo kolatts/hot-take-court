@@ -40,6 +40,11 @@ window.addEventListener('load', () => {
 
   if (me.roomCode && me.playerGuid) {
     startPolling();
+  } else if (me.roomCode && !me.playerGuid) {
+    // Join link: show the join form with code pre-filled, focused on name
+    show('form-join'); hide('form-create');
+    el('join-code').value = me.roomCode;
+    el('join-name').focus();
   }
 });
 

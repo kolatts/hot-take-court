@@ -249,6 +249,13 @@ textarea { resize: vertical; }
    Contempt
    ========================================================================== */
 .contempt-card { background: #fff3cd; border-color: #e0a820; }
+.contempt-rule {
+  font-size: 0.85rem;
+  font-family: sans-serif;
+  color: #7a5c00;
+  font-style: italic;
+  margin-bottom: 0.75rem;
+}
 .contempt-badge {
   background: #e0a820;
   color: #fff;

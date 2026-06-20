@@ -270,6 +270,7 @@ function renderReveal(s, phaseChanged) {
   if (contemptPlayers.length) {
     el('reveal-contempt').innerHTML =
       `<h2>🔨 Held in Contempt</h2>` +
+      `<p class="contempt-rule">No one voted for their argument as the most convincing this round. Zero best-arg votes = contempt of court.</p>` +
       contemptPlayers.map(p => `<div class="player-row">${escHtml(p.name)}</div>`).join('');
     show('reveal-contempt');
   } else {

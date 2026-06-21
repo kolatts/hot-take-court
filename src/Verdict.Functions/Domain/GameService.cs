@@ -13,10 +13,13 @@ namespace Verdict.Functions.Domain;
 public class GameService(TableServiceClient tableService)
 {
     // Table constants
-    private const string TableRooms   = "Rooms";
-    private const string TablePlayers = "Players";
-    private const string TableArgs    = "Args";
-    private const string TableVotes   = "Votes";
+    private const string TableRooms      = "Rooms";
+    private const string TablePlayers   = "Players";
+    private const string TableArgs      = "Args";
+    private const string TableVotes     = "Votes";
+    private const string TableReactions = "Reactions";
+
+    public static readonly string[] AllowedEmojis = ["🔥", "💀", "😂"];
 
     // Argument character limits — shared source of truth (mirrors MaxArgChars in app.js)
     public const int MinArgChars = 1;
@@ -26,10 +29,11 @@ public class GameService(TableServiceClient tableService)
     private const string RoomCodeAlphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     private const int    RoomCodeLength   = 4;
 
-    private TableClient Rooms   => tableService.GetTableClient(TableRooms);
-    private TableClient Players => tableService.GetTableClient(TablePlayers);
-    private TableClient Args    => tableService.GetTableClient(TableArgs);
-    private TableClient Votes   => tableService.GetTableClient(TableVotes);
+    private TableClient Rooms     => tableService.GetTableClient(TableRooms);
+    private TableClient Players   => tableService.GetTableClient(TablePlayers);
+    private TableClient Args      => tableService.GetTableClient(TableArgs);
+    private TableClient Votes     => tableService.GetTableClient(TableVotes);
+    private TableClient Reactions => tableService.GetTableClient(TableReactions);
 
     // -------------------------------------------------------------------------
     // Create room
@@ -420,6 +424,47 @@ public class GameService(TableServiceClient tableService)
 
     private async Task<int> CountVotesForRoundAsync(string roomCode, int round)
         => (await GetVotesForRoundAsync(roomCode, round)).Count;
+
+    public async Task AddReactionAsync(
+        string roomCode, string reactorGuid, int round, string argAuthorGuid, string emoji)
+    {
+        if (!AllowedEmojis.Contains(emoji))
+            throw new GameException("Invalid emoji.", 400);
+
+        var room = await GetRoomAsync(roomCode)
+            ?? throw new GameException("Room not found.", 404);
+
+        if (room.Phase != GamePhase.Reveal)
+            throw new GameException("Reactions are only allowed during the reveal phase.", 409);
+
+        if (room.CurrentRound != round)
+            throw new GameException("Round mismatch.", 409);
+
+        var reaction = new Entities.ReactionEntity
+        {
+            PartitionKey  = roomCode,
+            RowKey        = Entities.ReactionEntity.BuildRowKey(round, reactorGuid, argAuthorGuid),
+            Round         = round,
+            ReactorGuid   = reactorGuid,
+            ArgAuthorGuid = argAuthorGuid,
+            Emoji         = emoji,
+        };
+
+        await Reactions.UpsertEntityAsync(reaction, TableUpdateMode.Replace);
+    }
+
+    public async Task<List<Entities.ReactionEntity>> GetReactionsForRoundAsync(string roomCode, int round)
+    {
+        var prefix  = $"R{round}-RX-";
+        var results = new List<Entities.ReactionEntity>();
+        await foreach (var r in Reactions.QueryAsync<Entities.ReactionEntity>(
+            r => r.PartitionKey == roomCode && r.RowKey.CompareTo(prefix) >= 0
+                                            && r.RowKey.CompareTo(prefix + "￿") <= 0))
+        {
+            if (r.Round == round) results.Add(r);
+        }
+        return results;
+    }
 
     // -------------------------------------------------------------------------
     // Room code generation

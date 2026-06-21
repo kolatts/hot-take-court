@@ -40,7 +40,7 @@
 body {
   font-family: 'Lora', Georgia, serif;
   background-color: var(--walnut);
-  background-image: url('/images/texture-wood.png');
+  background-image: url('images/texture-wood.png');
   background-size: 256px 256px;
   color: var(--text);
   min-height: 100vh;
@@ -84,7 +84,7 @@ body {
 }
 
 .parallax-bg {
-  background-image: url('/images/bg-courtroom.png');
+  background-image: url('images/bg-courtroom.png');
 }
 
 /* Judge layer: positioned at the bottom-centre */
@@ -172,7 +172,7 @@ body {
   border-bottom: 2px solid var(--brass);
   margin-bottom: 1.5rem;
   background-color: var(--mahogany);
-  background-image: url('/images/texture-leather.png');
+  background-image: url('images/texture-leather.png');
   background-size: 256px 256px;
   background-blend-mode: overlay;
   border-radius: var(--radius) var(--radius) 0 0;
@@ -234,7 +234,7 @@ body {
    ========================================================================== */
 .card {
   background-color: var(--parchment);
-  background-image: url('/images/texture-parchment.png');
+  background-image: url('images/texture-parchment.png');
   background-size: 512px 512px;
   background-blend-mode: multiply;
   color: var(--text-dark);
@@ -505,7 +505,7 @@ input[type=text]:focus, select:focus, textarea:focus {
    ========================================================================== */
 .contempt-card {
   background-color: #fff3cd;
-  background-image: url('/images/texture-parchment.png');
+  background-image: url('images/texture-parchment.png');
   background-size: 512px 512px;
   background-blend-mode: multiply;
   border-color: var(--warn);
@@ -588,7 +588,7 @@ input[type=text]:focus, select:focus, textarea:focus {
 
 .connecting-inner {
   background-color: var(--parchment);
-  background-image: url('/images/texture-parchment.png');
+  background-image: url('images/texture-parchment.png');
   background-size: 512px 512px;
   background-blend-mode: multiply;
   color: var(--ink);

@@ -193,7 +193,7 @@ function renderArgument(s, phaseChanged) {
 
   sideBadge.innerHTML = `
     <div class="side-avatar-wrap">
-      <img src="/images/${charImg}.png" class="side-avatar" alt="" />
+      <img src="images/${charImg}.png" class="side-avatar" alt="" />
     </div>
     <span>${escHtml(sideText)}</span>
   `;
@@ -306,7 +306,7 @@ function renderReveal(s, phaseChanged) {
     (s.contemptGuids || []).includes(p.guid));
   if (contemptPlayers.length) {
     el('reveal-contempt').innerHTML =
-      `<h2><img src="/images/gavel-slam.png" class="contempt-gavel" alt="" /> Held in Contempt</h2>` +
+      `<h2><img src="images/gavel-slam.png" class="contempt-gavel" alt="" /> Held in Contempt</h2>` +
       `<p class="contempt-rule">No one voted for their argument as the most convincing this round. Zero best-arg votes = contempt of court.</p>` +
       contemptPlayers.map(p => `<div class="player-row">${escHtml(p.name)}</div>`).join('');
     show('reveal-contempt');

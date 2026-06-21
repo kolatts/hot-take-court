@@ -530,8 +530,8 @@ function addTakeInput(value, index) {
   const con = el('takes-container');
   const row = document.createElement('div');
   row.className = 'take-row';
-  row.innerHTML = `<input class="take-input" type="text" maxlength="160"
-      placeholder="Take ${index}" value="${escAttr(value)}" />`;
+  row.innerHTML = `<textarea class="take-input" maxlength="160" rows="2"
+      placeholder="Take ${index}">${escHtml(value)}</textarea>`;
   con.appendChild(row);
 }
 

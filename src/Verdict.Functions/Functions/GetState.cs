@@ -82,7 +82,8 @@ public class GetState(GameService game)
     {
         var args = await game.GetArgsForRoundAsync(room.PartitionKey, room.CurrentRound);
         var hasSubmitted = args.Any(a => a.PlayerGuid == caller.RowKey);
-        var mySide = SideAssigner.Assign(room.RandSeed, room.CurrentRound, caller.RowKey);
+        var mySide = SideAssigner.Assign(room.RandSeed, room.CurrentRound, caller.RowKey,
+                         players.Select(p => p.RowKey));
 
         return new OkObjectResult(new
         {

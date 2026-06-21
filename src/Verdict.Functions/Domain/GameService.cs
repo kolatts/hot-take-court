@@ -202,7 +202,9 @@ public class GameService(TableServiceClient tableService)
         if (room.Phase != GamePhase.Argument)
             throw new GameException("Not in argument phase.", 409);
 
-        var side = SideAssigner.Assign(room.RandSeed, room.CurrentRound, playerGuid);
+        var players = await GetPlayersAsync(roomCode);
+        var side    = SideAssigner.Assign(room.RandSeed, room.CurrentRound, playerGuid,
+                          players.Select(p => p.RowKey));
 
         var arg = new ArgEntity
         {

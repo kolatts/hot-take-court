@@ -152,8 +152,9 @@ public class GetState(GameService game)
     private async Task<IActionResult> BuildRevealStateAsync(
         RoomEntity room, List<PlayerEntity> players, PlayerEntity caller, string[] takes)
     {
-        var args  = await game.GetArgsForRoundAsync(room.PartitionKey, room.CurrentRound);
-        var votes = await game.GetVotesForRoundAsync(room.PartitionKey, room.CurrentRound);
+        var args      = await game.GetArgsForRoundAsync(room.PartitionKey, room.CurrentRound);
+        var votes     = await game.GetVotesForRoundAsync(room.PartitionKey, room.CurrentRound);
+        var reactions = await game.GetReactionsForRoundAsync(room.PartitionKey, room.CurrentRound);
 
         // Vote tallies
         var votesFor = players.ToDictionary(p => p.RowKey, _ => 0);
@@ -172,16 +173,19 @@ public class GetState(GameService game)
         var revealedArgs = args.Select(a =>
         {
             playerMap.TryGetValue(a.PlayerGuid, out var author);
-            // Show the voter's real stance for this player
-            var voterEntry = votes.FirstOrDefault(v => v.VoterGuid == a.PlayerGuid);
+            var voterEntry  = votes.FirstOrDefault(v => v.VoterGuid == a.PlayerGuid);
+            var argReactions = reactions.Where(r => r.ArgAuthorGuid == a.PlayerGuid).ToList();
             return new
             {
-                authorGuid  = a.PlayerGuid,
-                authorName  = author?.Name ?? "?",
-                side        = a.Side,
-                text        = a.Text,
-                realStance  = voterEntry?.Stance,    // null if they didn't vote (shouldn't happen at reveal)
+                authorGuid   = a.PlayerGuid,
+                authorName   = author?.Name ?? "?",
+                side         = a.Side,
+                text         = a.Text,
+                realStance   = voterEntry?.Stance,
                 bestArgVotes = votesFor.GetValueOrDefault(a.PlayerGuid),
+                reactions    = GameService.AllowedEmojis.ToDictionary(
+                                   e => e, e => argReactions.Count(r => r.Emoji == e)),
+                myReaction   = argReactions.FirstOrDefault(r => r.ReactorGuid == caller.RowKey)?.Emoji,
             };
         });
 
